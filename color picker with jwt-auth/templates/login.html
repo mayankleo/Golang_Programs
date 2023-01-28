@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: rgb(2, 0, 36);
+            background: linear-gradient(0deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 35%, rgba(0, 212, 255, 1) 100%);
+        }
+
+        .d1 {
+            width: 40vw;
+            border-radius: 10px;
+            margin: 20px;
+            background: rgb(2, 0, 36);
+            background: linear-gradient(175deg, rgba(2, 0, 36, 1) 0%, rgba(255, 255, 255,
+                        0.2378917378917379) 0%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .d2 {
+            width: 30vw;
+            padding-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .d3 {
+            width: 100%;
+            font-family: 'Circular-Loom';
+        }
+
+        input {
+            height: 40px;
+            margin: 0;
+            width: 95%;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            padding: 0 10px;
+        }
+
+        p {
+            color: red;
+            text-align: center;
+        }
+
+        a {
+            color: whitesmoke;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="d1">
+        <div class="d2">
+            <div class="d3">
+                <h1>Login</h1>
+            </div>
+            <input type="text" placeholder="Username" id="username">
+            <input type="text" placeholder="Password" id="password">
+            <p id="err"></p>
+            <input type="submit" id="sb" value="SignIn" onclick="login()">
+            <br>
+            <a href="/signup">Don't Have Account? SignUp Here</a>
+            <br>
+        </div>
+    </div>
+</body>
+<script>
+    function login() {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/login");
+        xhr.setRequestHeader("Accept", "application/json");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status == 200) {
+                    window.location.replace("/home");
+                } else if (xhr.status == 401) {
+                    document.getElementById("err").innerHTML = `username or password is 
+wrong!!`;
+                } else {
+                    document.getElementById("err").innerHTML = `Something is wrong!! 
+status code - ${xhr.status}`;
+                }
+            }
+        };
+        let data = `{
+"username": "${document.getElementById("username").value.trim()}",
+"password": "${document.getElementById("password").value.trim()}"
+}`;
+        xhr.send(data);
+    }
+    document.onkeydown = function () {
+        if (window.event.keyCode == '13') {
+            document.getElementById("sb").click();
+        }
+    }
+</script>
+
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Picker</title>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 50px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgb(75, 127, 249);
+            ;
+            border-radius: 50px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        body {
+            background: rgb(63, 58, 145);
+            background: linear-gradient(243deg, rgba(63, 58, 145, 1) 0%, rgba(111, 111,
+                        194, 1) 43%, rgba(130, 159, 250, 1) 99%);
+            height: 110vh;
+            margin: 0;
+            font-family: 'Circular-Loom';
+            overflow: hidden;
+        }
+
+        h1 {
+            margin: 5px;
+        }
+
+        button {
+            padding: 7px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            background-color: rgb(75, 127, 249);
+            color: #fff;
+        }
+
+        nav {
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgb(255, 255, 255);
+            background: linear-gradient(243deg, rgba(255, 255, 255, 0.2678062678062678) 32%, rgba(255, 255, 255, 0.33048433048433046) 71%);
+        }
+
+        label {
+            border-radius: 5px;
+            background: rgb(75, 127, 249);
+            display: table;
+            color: #fff;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 60% 38%;
+            gap: 2%;
+            padding: 10px;
+            height: 89vh;
+        }
+
+        .grid-ch {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: rgb(2, 0, 36);
+            background: linear-gradient(175deg, rgba(2, 0, 36, 1) 0%, rgba(255, 255, 255,
+                        0.2378917378917379) 0%);
+            border-radius: 10px;
+        }
+
+        .tool {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            height: 10vh;
+        }
+
+        #color {
+            height: 50px;
+            width: 50px;
+            background-color: black;
+            margin: 10px;
+        }
+
+        img {
+            padding: 10px;
+            height: 70vh;
+        }
+
+        .cc {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 96%;
+            background-color: red;
+            margin: 4px 2%;
+            border-radius: 10px;
+            background: rgb(2, 0, 36);
+            background: linear-gradient(175deg, rgba(2, 0, 36, 1) 0%, rgba(255, 255, 255,
+                        0.2378917378917379) 0%);
+        }
+
+        .ex {
+            overflow-y: scroll;
+        }
+
+        #cdiv {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .grid-ch2 {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            background: rgb(2, 0, 36);
+            background: linear-gradient(175deg, rgba(2, 0, 36, 1) 0%, rgba(255, 255, 255,
+                        0.2378917378917379) 0%);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <h1>Hello, claims.Username</h1>
+        <button onclick="deleteAllCookies()">Logout</button>
+    </nav>
+    <div class="grid-container">
+        <div class="grid-ch">
+            <div class="tool">
+                <button class="open-picker">Pick Tool</button>
+                <button><label>Select Img<input type="file" id="img-select" accept="image/*"></label></button>
+                <p class="res">Picked Color: #000000</p>
+                <div id="color"></div>
+            </div>
+            <img style="max-width: 90vw;" src="" alt="" class="preview">
+        </div>
+        <div id="ccon" class="grid-ch2 ex">
+            <h2>History</h2>
+            <div id="cdiv">
+                <div class="cc">
+                    <p class="res">Example Color: #000000</p>
+                    <div id="color" style="background-color: #000000;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    function refreshtoken() {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "/refresh");
+        xhr.send();
+    }
+    function deleteAllCookies() {
+        var cookies = document.cookie.split(";");
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i];
+            var eqPos = cookie.indexOf("=");
+            var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        }
+        window.location.replace("/");
+    }
+    const imgInput = document.querySelector('#img-select')
+    const imgPreview = document.querySelector('.preview')
+    if (!window.EyeDropper) {
+        alert("Your browser does not support this feature")
+    }
+    const eyeDropper = new EyeDropper();
+    const pickerBtn = document.querySelector('.open-picker');
+    const result = document.querySelector('.res');
+    const colorvr = document.getElementById("color");
+    const cconvr = document.getElementById("cdiv");
+    imgInput.addEventListener('change', function () {
+        const file = this.files[0]
+        if (!file) return
+        const reader = new FileReader()
+        reader.addEventListener('load', function () {
+            imgPreview.src = this.result
+        })
+        reader.readAsDataURL(file)
+    })
+    pickerBtn.addEventListener('click', function () {
+        eyeDropper.open()
+            .then(res => {
+                let xhr = new XMLHttpRequest();
+                xhr.open("POST", "/home");
+                xhr.setRequestHeader("Accept", "application/json");
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status == 200) {
+                            result.innerHTML = `Picked Color Code: ${res.sRGBHex}`
+                            colorvr.style.background = String(res.sRGBHex);
+                            cconvr.innerHTML = `<div class="cc"><p class="res">Color: 
+${res.sRGBHex}</p><div id="color" style="background-color: ${res.sRGBHex};"></div></div>`
+                                + cconvr.innerHTML;
+                            refreshtoken()
+                        } else {
+                            console.log("something wrong!!")
+                        }
+                    }
+                };
+                let data = `{"color": "${res.sRGBHex}"}`;
+                xhr.send(data);
+            })
+            .catch(err => {
+                console.log("Something is wrong while selecting color.");
+            })
+    })
+    document.addEventListener('DOMContentLoaded', function () {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "/gethostory");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status == 200) {
+                    console.log(xhr.responseText);
+                    let data = JSON.parse(xhr.response);
+                    console.log(data.Color);
+                    for (let i = 0; i < data.Color.length; i++) {
+                        cconvr.innerHTML = `<div class="cc"><p class="res">Color: 
+${data.Color[i]}</p><div id="color" style="background-color: 
+${data.Color[i]};"></div></div>` + cconvr.innerHTML;
+                    }
+                } else {
+                    console.log("something wrong!!")
+                }
+            }
+        };
+        xhr.send();
+    }, false);
+</script>
+
+</html>
